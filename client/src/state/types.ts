@@ -55,3 +55,5 @@ export interface ExpensesByCategory {
     createdAt: string;
     updatedAt: string;
   }
+
+  
