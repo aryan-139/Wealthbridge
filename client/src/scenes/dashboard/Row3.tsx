@@ -1,20 +1,45 @@
 import BoxHeader from '@/components/BoxHeader';
 import DashboardBox from '@/components/DashboardBox';
 import { useGetKpisQuery, useGetProductsQuery, useGetTransactionsQuery } from '@/state/api';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { DataGrid, GridCellParams } from '@mui/x-data-grid';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTheme } from '@mui/material';
+import FlexBetween from '@/components/FlexBetween';
+import { Cell, Pie, PieChart } from 'recharts';
 
 type Props = {};
 
 const Row3 = (props: Props) => {
   const {palette}= useTheme();
-  const {data: kpidata}= useGetKpisQuery();
+  const pieColors= [palette.primary[800],palette.primary[500]];
+  const {data: kpiData}= useGetKpisQuery();
   const {data: productData}= useGetProductsQuery();
   const{ data: transactionData}= useGetTransactionsQuery();
   //console.log("transactionsData",transactionsData);
   //we can console log the data to see what we are getting back from the api
+  const pieChartData = useMemo(() => {
+    if (kpiData) {
+      const totalExpenses = kpiData[0].totalExpenses;
+      return Object.entries(kpiData[0].expensesByCategory).map(
+        ([key, value]) => {
+          return [
+            {
+              name: key,
+              value: value,
+            },
+            {
+              name: `${key} of Total`,
+              value: totalExpenses - value,
+            },
+          ];
+        }
+      );
+    }
+  }, [kpiData]);
+
+
+
   const productColumns=[
     {
       field: "_id",
@@ -135,8 +160,56 @@ const Row3 = (props: Props) => {
       </Box>
 
     </DashboardBox>
-    <DashboardBox  gridArea="i"></DashboardBox>
-    <DashboardBox  gridArea="j"></DashboardBox>
+    <DashboardBox  gridArea="i">
+      <BoxHeader title="Expense Breakdown by Category" sideText="+4%" />
+      <FlexBetween mt="0.5rem" gap="0.5rem" p="0 1rem" textAlign="center">
+      {pieChartData?.map((data, i) => (
+            <Box key={`${data[0].name}-${i}`}>
+              <PieChart width={110} height={100}>
+                <Pie
+                  stroke="none"
+                  data={data}
+                  innerRadius={18}
+                  outerRadius={35}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieColors[index]} />
+                  ))}
+                </Pie>
+              </PieChart>
+              <Typography variant="h5">{data[0].name}</Typography>
+            </Box>
+          ))}
+      </FlexBetween>
+    </DashboardBox>
+    
+    <DashboardBox  gridArea="j">
+    <BoxHeader
+          title="Overall Summary and Explanation Data"
+          sideText="+15%"
+        />
+        <Box
+          height="15px"
+          margin="1.25rem 1rem 0.4rem 1rem"
+          bgcolor={palette.primary[800]}
+          borderRadius="1rem"
+        >
+          <Box
+            height="15px"
+            bgcolor={palette.primary[600]}
+            borderRadius="1rem"
+            width="40%"
+          ></Box>
+        </Box>
+        <Typography margin="0 1rem" variant="h6">
+          Orci aliquam enim vel diam. Venenatis euismod id donec mus lorem etiam
+          ullamcorper odio sed. Ipsum non sed gravida etiam urna egestas
+          molestie volutpat et. Malesuada quis pretium aliquet lacinia ornare
+          sed. In volutpat nullam at est id cum pulvinar nunc.
+        </Typography>
+    </DashboardBox>
     </>
   );
 };
