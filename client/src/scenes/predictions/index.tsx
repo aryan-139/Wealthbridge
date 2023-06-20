@@ -1,20 +1,41 @@
 import DashboardBox from '@/components/DashboardBox';
 import FlexBetween from '@/components/FlexBetween';
 import { useGetKpisQuery } from '@/state/api';
-import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
-import React, { useState } from 'react';
-import { CartesianGrid, Label, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Box, Button, Typography, useTheme } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { CartesianGrid, Label, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import regression, { DataPoint } from "regression";
 
-type Props = {}
 
-const predictions = (props: Props) => {
+const Predictions = () => {
     const {palette} = useTheme();
-    const{isPredictions, setIsPredictions} = useState(false);
-    const{data: kpidata}=useGetKpisQuery();
+    const[isPredictions, setIsPredictions] = useState(false);
+    const{data: kpiData}=useGetKpisQuery();
 
-    // const formattedData = useMemo(() => {
-    //   //add code for formatted data here
-    // }
+    const formattedData = useMemo(() => {
+      if(!kpiData) return [];
+      const monthData= kpiData[0].monthlyData;
+
+      
+
+      const formatted: Array<DataPoint> = monthData.map(
+        ({ revenue},i:number) => {
+          return[i, revenue];
+
+      });
+
+      const regressionLine= regression.linear(formatted);
+
+      return monthData.map(({month, revenue}, i:number) => {
+        return{
+          name:month,
+          "Actual Revenue": revenue,
+          "Regression Line": regressionLine.points[i][1],
+          "Predicted Revenue": regressionLine.predict(i+12)[1],
+        };
+      });
+
+    }, [kpiData])
 
   return (
     <DashboardBox 
@@ -66,7 +87,6 @@ const predictions = (props: Props) => {
           </XAxis>
           <YAxis
           domain={[12000,26000]}
-           yAxisId="left"
            axisLine={false}
            style={{fontSize:"10px"}}
            tickFormatter={(v)=> `$${v}`}          
@@ -109,4 +129,4 @@ const predictions = (props: Props) => {
   )
 }
 
-export default predictions;
+export default Predictions;
