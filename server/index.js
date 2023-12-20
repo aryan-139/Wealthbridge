@@ -41,7 +41,7 @@ mongoose
   .then(async () => {
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 
-    /* ADD DATA ONE TIME ONLY OR AS NEEDED */
+    /* WE DO NOT NEED MANY WRITES SO WE WILL UPDATE THE DATABASE ONCE OR AS PER OUR REQUIREMENTS */
     // await mongoose.connection.db.dropDatabase();
     // KPI.insertMany(kpis);
     // Product.insertMany(products);

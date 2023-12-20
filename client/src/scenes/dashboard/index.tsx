@@ -3,6 +3,7 @@ import Row1 from './Row1';
 import Row2 from './Row2';
 import Row3 from './Row3';
 
+//we are using this to define the structure that will be present in the dashboard
 const gridTemplateLargeScreens =`
 "a b c"
 "a b c"
@@ -15,6 +16,7 @@ const gridTemplateLargeScreens =`
 "g h j"
 "g h j"
 `;
+//whereas this section correlates to the template representation in smaller screens 
 const gridTemplateSmallScreens=`
 "a"
 "a"

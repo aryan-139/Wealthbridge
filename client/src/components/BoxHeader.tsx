@@ -1,7 +1,6 @@
 import React from 'react'
 import FlexBetween from './FlexBetween'
-import { Palette } from '@mui/icons-material'
-import { useTheme } from '@emotion/react'
+import { useTheme } from '@mui/material'
 import { Box, Typography } from '@mui/material'
 
 type Props = {
