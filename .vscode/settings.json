@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/d7d7a9cb-c1df-4292-8f14-a876d5af4f7e/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/wealthbridge",
+    "appService.deploySubpath": "server"
+}
